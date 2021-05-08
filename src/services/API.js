@@ -18,10 +18,6 @@ class API {
     set(key, val) {
         return this.storage.setItem(key, val);
     }
-    
-    remove(key) {
-        return this.storage.removeItem(key);
-    }
 
     clear() {
         return this.storage.clear();

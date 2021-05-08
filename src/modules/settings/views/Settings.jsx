@@ -8,7 +8,7 @@ import {Option} from '../../../components'
 import {AnswerType} from '../components'
 
 const Settings = (props) => {
-    const {settings, updateSetingsUnits, history, convertUnits}            = useContext(DataContext)
+    const {settings, updateSetingsUnits, history, convertUnits, clearData}            = useContext(DataContext)
 
     return (
         <div className="container my-5">
@@ -22,6 +22,14 @@ const Settings = (props) => {
             <div className="row">
                 <div className="col">
                     <h1 className="fs-2">Settings</h1>
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    <h2 className="fs-4 mt-3">Clear All Data</h2>
+                    <button className="btn btn-warning" onClick={clearData}>
+                        Clear
+                    </button>
                 </div>
             </div>
             <div className="row">
@@ -48,14 +56,14 @@ const Settings = (props) => {
             <div className="row">
                 <div className="col">
                     <h2 className="fs-4 mt-3 mb-2">History</h2>
-                        {history.length > 0 &&
-                            history.map((data,i) => (
-                                <div className="row">
-                                    {data.map((entrie) => (
+                        {(history && history.length > 0) &&
+                            history.map((data, i) => (
+                                <div className="row" key={i}>
+                                    {data.map((entrie, n) => (
                                         !entrie.Country ? 
-                                            <AnswerType {...{data: entrie}} key={i} />
+                                            <AnswerType {...{data: entrie}} key={`historyList${Math.floor(Math.random() * 10000)}${n}`} />
                                         :
-                                            <Option {...{data: entrie, settings, convertUnits, history: true}} key={i} />
+                                            <Option {...{data: entrie, settings, convertUnits, history: true}} key={`historyList${Math.floor(Math.random() * 10000)}${n}`} />
                                     ))}
                                 </div>
                             ))

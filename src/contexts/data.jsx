@@ -81,9 +81,8 @@ export const DataProvider = (props) => {
     const submitAnswer = (id) => {
         const winner = currentGameData.reduce((prev, current) => (prev.Temperature > current.Temperature) ? prev : current)
         if (winner) {
-            console.log(winner)
-            console.log(id)
             let result = winner.ID === id ? true : false
+            setGameStatus(result ? 1 : 2)
             let newHistoryEntry = [...currentGameData]
             newHistoryEntry.push({
                 ID: 2,
@@ -97,50 +96,47 @@ export const DataProvider = (props) => {
                 setScore(score + 1)
                 api.set("Score", score + 1)
             }
-            setGameStatus(result ? 1 : 2)
+            
         } else {
 
         }
     }
 
-    const processSettings = () => {
-        if (api.exists("Settings")) {
-            let set = api.get("Settings")
-            setSettings(JSON.parse(set))
+    const clearData = () => {
+        api.clear()
+        setGameStatus(null)
+        setScore(0)
+        setCurrentGameData(null)
+        setSettings({Units: false})
+        setHistory([])
+        syncronise()
+        generateNewGame()
+    }
+
+    const syncronise = () => {
+        if (api.length() === 3) {
+            setSettings(JSON.parse(api.storage.Settings))
+            setScore(parseInt(api.storage.Score))
+            setHistory(JSON.parse(api.storage.History))
         } else {
+            api.set("Score", score)
             api.set("Settings", JSON.stringify(settings))
-        }
-    }
-
-    const processScore = () => {
-        if (api.exists("Score")) {
-            let set = api.get("Score")
-            setScore(parseInt(set))
-        } else {
-            api.set("Score", 0)
-        }
-    }
-
-    const processHistory = () => {
-        if (api.exists("History")) {
-            let set = api.get("History")
-            setHistory(JSON.parse(set))
-        } else {
             api.set("History", JSON.stringify(history))
         }
     }
 
     const initial = () => {
-        processSettings()
-        processScore()
-        processHistory()
+        syncronise()
+        if (currentGameData === null) {
+            generateNewGame()
+        }
         return () => {}
     }
 
     useEffect(initial, [])
 
 	return (
-		<DataContext.Provider value={{generateNewGame, currentGameData, gameStatus, settings, updateSetingsUnits, convertUnits, score, history, submitAnswer}}>
+		<DataContext.Provider value={{generateNewGame, currentGameData, gameStatus, settings, updateSetingsUnits, convertUnits, score, history, submitAnswer, clearData}}>
 			{props.children}
 		</DataContext.Provider>
 	);

@@ -3,10 +3,13 @@ import React from 'react'
 const Option = (props) => {
     const processAnswer = (e, id) => {
         e.preventDefault() || e.stopPropagation();
-        return props.submitAnswer ? props.submitAnswer(id) : false
+        if (!props.history) {
+            props.submitAnswer(id)
+        }
     }
     return (
-        <div className={`col-3 border text-center mx-1 ${props.submitAnswer ? 'btn btn-outline-secondary' : ''}`}
+        <button className={`col-3 border text-center mx-1 ${props.submitAnswer ? 'btn btn-outline-secondary' : ''}`}
+            disabled={([1,2].includes(props.gameStatus) || props.history) ? true : false}
             onClick={(e) => processAnswer(e, props.data.ID)}>
             <p className="m-1">{`${props.data.City},`}</p>
             <p className="m-1">{props.data.Country}</p>
@@ -16,7 +19,7 @@ const Option = (props) => {
                     <span>{!props.settings.Units ? ' C' : ' F'}</span>
                 </p>
             }
-        </div>
+        </button>
     )
 }
 
