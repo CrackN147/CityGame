@@ -1,1 +1,1 @@
-# CityTemperatureGame
+# CityGame
